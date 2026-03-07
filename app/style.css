@@ -1,0 +1,129 @@
+.modern-navbar {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  padding: 0.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.modern-navbar.scrolled {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 0.2rem 0;
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #3f51b5, #2196f3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nav-link-hover {
+  position: relative;
+  padding: 0.5rem 1rem;
+  color: #333 !important;
+  transition: all 0.3s ease;
+}
+
+.nav-link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3f51b5, #2196f3);
+  transition: width 0.3s ease;
+}
+
+.nav-link-hover:hover::after {
+  width: 70%;
+}
+
+.navbar-toggler-animation {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: #333;
+  margin: 4px 0;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-animation:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-animation:nth-child(2) {
+  opacity: 0;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-animation:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+.banner-img{
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),  url('/assets/hero-section.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+}
+@media only screen and (max-width: 600px) {
+  .banner-img {
+    background:linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),  url('/assets/hero-section.jpg');
+    height: 60vh;
+    background-position: 85% center;
+}
+.hero-title {
+  color: white;
+  font-size: 3rem!important;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+}
+/* Hero Section Styles */
+.hero-container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  background-size: cover;
+  background-position: 85% center!important;
+}
+.hero-content {
+  padding-left: 2rem;
+}
+
+.hero-title {
+  color: white;
+  font-size: 5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.hero-description {
+  color: white;
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.hero-buttons .btn {
+  transition: all 0.3s ease;
+}
+
+.hero-buttons .btn-primary {
+   background: linear-gradient(90deg, #3f51b5, #2196f3);
+    border: none;
+}
+
+.hero-buttons .btn-primary:hover {
+  background-color: #ff5252;
+  border-color: #ff5252;
+  transform: translateY(-2px);
+}
+
+.hero-buttons .btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.hero-subtext {
+  color: rgba(255, 255, 255, 0.7);
+}
