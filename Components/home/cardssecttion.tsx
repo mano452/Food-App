@@ -1,51 +1,93 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
 
 type Product = {
   id: number;
-  title: string;
+  name: string;
+  category: string;
   description: string;
   price: number;
-  thumbnail: string;
+  quantity: number;
+  image: string;
 };
 
 function Cardsection() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch("https://dummyjson.com/products?limit=15")
+    fetch("http://localhost:3000/api/additems")
       .then((res) => res.json())
-      .then((data) => setProducts(data.products))
+      .then((data) => {
+        console.log("Fetched products:", data);
+        setProducts(data);
+      })
       .catch((err) => console.error("Error fetching products:", err));
-  }, [products]);
+  }, []);
 
   return (
     <Container className="my-5">
-      <h2 className="mb-4 text-center fw-bold">Shop Products</h2>
+      <h2 className="mb-5 text-center fw-bold">Shop Products</h2>
+
       <Row>
-        {products.map((product) => (
-          <Col key={product.id} md={4} sm={6} xs={12} className="mb-4">
-            <Card className="h-100 shadow-sm">
-              <Card.Img
-                variant="top"
-                src={product.thumbnail}
-                alt={product.title}
-                style={{maxHeight:"200px",objectFit:"contain"}}
-               className="img-fluid"
-              />
-              <Card.Body>
-                <Card.Title>{product.title}</Card.Title>
-                <Card.Text style={{ fontSize: "14px" }}>
-                  {product.description.substring(0, 100)}...
+        {products?.map((product) => (
+          <Col key={product.id} lg={4} md={6} xs={12} className="mb-4">
+            
+            <Card className="food-card border-0 shadow-sm h-100">
+
+              {/* Image Section */}
+              <div className="position-relative">
+                
+                <Card.Img
+                  variant="top"
+                  src={product.image}
+                  alt={product.name}
+                  className="food-img"
+                />
+
+                {/* Quantity Badge */}
+                <Badge
+                  bg="warning"
+                  text="dark"
+                  className="position-absolute top-0 end-0 m-2 px-3 py-2 fs-6"
+                >
+                  Qty: {product.quantity}
+                </Badge>
+
+              </div>
+
+              {/* Card Body */}
+              <Card.Body className="d-flex flex-column">
+
+                <Card.Title className="fw-bold">
+                  {product.name}
+                </Card.Title>
+
+                <Card.Text className="text-muted small flex-grow-1">
+                  {product.description.substring(0, 80)}...
                 </Card.Text>
-                <h5 className="fw-bold text-success">${product.price}</h5>
-                <Button variant="primary" className="me-2">
-                  Add to Cart
-                </Button>
-                <Button variant="outline-secondary">Buy Now</Button>
+
+                <div className="d-flex justify-content-between align-items-center mt-3">
+                  
+                  <h5 className="fw-bold text-success mb-0">
+                    ${product.price}
+                  </h5>
+
+                </div>
+
+                <div className="mt-3 d-flex gap-2">
+                  <Button variant="dark" className="w-100">
+                    Add to Cart
+                  </Button>
+                  <Button variant="outline-dark" className="w-100">
+                    Buy Now
+                  </Button>
+                </div>
+
               </Card.Body>
+
             </Card>
+
           </Col>
         ))}
       </Row>

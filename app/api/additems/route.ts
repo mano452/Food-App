@@ -55,16 +55,16 @@ import { Additem } from "@/model/additem";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, price, description, category } = body;
+    const { name, price, description, category, quantity, image } = body;
 
-    if (!name || !price || !description || !category) {
+    if (!name || !price || !description || !category || !quantity || !image) {
       return NextResponse.json(
         { message: "All fields are required" },
         { status: 400 }
       );
     }
 
-    console.log("added:", { name, price, description, category });
+    console.log("added:", { name, price, description, category, quantity, image });
 
     await dbConnect();
 
@@ -73,6 +73,9 @@ export async function POST(req: Request) {
       price,
       description,
       category,
+      quantity,
+      image,
+
     });
 
     try {
@@ -96,4 +99,50 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function GET() {
+  try {
+    await dbConnect();
+    const products = await Additem.find({});
+    return NextResponse.json(products, { status: 200 });
+  } catch (error) {
+    console.error("GET API error:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch products" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    await dbConnect();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "Product ID is required" },
+        { status: 400 }
+      );
+    }
+    const deletedProduct = await Additem.findByIdAndDelete(id);
+    if (!deletedProduct) {
+      return NextResponse.json(
+        { message: "Product not found" },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json(
+      { message: "Product deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("DELETE API error:", error);
+      return NextResponse.json(
+        { message: "Failed to delete product" },
+        { status: 500 }
+      );
+    }
 }

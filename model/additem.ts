@@ -6,9 +6,11 @@ const itemSchema = new Schema(
     price:{type: String, required:true},
     category:{type: String, required:true},
     description:{type: String, required:true},
-
+    quantity:{type: String, required:true},
+    image:{type: String, required:true},
+    
   },
   { timestamps: true }
 );
 
-export const Additem = models.User || mongoose.model("Additem", itemSchema);
+export const Additem = models.Additem || mongoose.model("Additem", itemSchema);

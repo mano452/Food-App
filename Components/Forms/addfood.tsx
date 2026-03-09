@@ -1,16 +1,43 @@
 "use client";
-import React, { useState } from "react";
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Form, Button, Table } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 
 function Addfooditem() {
-  const [name, setName] = useState("");
   const router = useRouter();
-  const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
 
+  const [name, setName] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [quantity, setQuantity] = useState<string>("");
+  const [image, setImage] = useState<string>("");
+
+  const [items, setItems] = useState<
+    Array<{
+      id: string;
+      name: string;
+      price: string;
+      description: string;
+      quantity: string;
+      image: string;
+      category: string;
+    }>
+  >([]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("/api/additems");
+      const data = await response.json();
+      setItems(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setItems([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -19,111 +46,197 @@ function Addfooditem() {
       const response = await fetch("/api/additems", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", 
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, category, description,price }),
+        body: JSON.stringify({
+          name,
+          category,
+          description,
+          price,
+          quantity,
+          image,
+        }),
       });
-      console.log(response);
+
       if (response.status === 201) {
-       alert('Product added');
+        setName("");
+        setCategory("");
+        setPrice("");
+        setDescription("");
+        setQuantity("");
+        setImage("");
+        fetchProducts();
       } else {
         const err = await response.json();
-        alert(err.message || "Registration failed");
+        alert(err.message || "Failed");
       }
-    } catch (e) {
-      console.error("Error during registration:", e);
-    }
+    } catch (e) {}
   }
 
+  const deleteProduct = async (id: string) => {
+    try {
+      await fetch(`/api/additems/${id}`, {
+        method: "DELETE",
+      });
+      fetchProducts();
+    } catch (e) {}
+  };
+
+  const editProduct = (item: any) => {
+    setName(item?.name || "");
+    setCategory(item?.category || "");
+    setPrice(item?.price || "");
+    setDescription(item?.description || "");
+    setQuantity(item?.quantity || "");
+    setImage(item?.image || "");
+  };
+
   return (
-   <Container
-      fluid
-      className="d-flex justify-content-center align-items-center min-vh-100 bg-light"
-    >
-      <Row className="w-100">
-        <Col xs={12} md={6} lg={5} className="mx-auto">
+    <Container fluid className="min-vh-100 bg-light p-5">
+      <Row className="mb-5">
+        <Col md={5} className="mx-auto">
           <Card className="p-4 shadow-lg border-0 rounded-4">
-            <Card.Body>
-              <h3 className="text-center mb-4 fw-bold">🍔 Add Food Product</h3>
-              <Form
-                onSubmit={handleSubmit}
-              >
-                {/* Product Name */}
-                <Form.Group className="mb-3" controlId="formProductName">
-                  <Form.Label>Product Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter food name"
-                    value={name}
-                    name='name'
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </Form.Group>
+            <h3 className="text-center mb-4">🍔 Add Food Product</h3>
 
-                {/* Category */}
-                <Form.Group className="mb-3" controlId="formCategory">
-                  <Form.Label>Category</Form.Label>
-                  <Form.Select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    required
-                  >
-                    <option value="">Select category</option>
-                    <option value="Breakfast">Breakfast</option>
-                    <option value="Lunch">Lunch</option>
-                    <option value="Dinner">Dinner</option>
-                    <option value="Snacks">Snacks</option>
-                    <option value="Drinks">Drinks</option>
-                  </Form.Select>
-                </Form.Group>
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Product Name</Form.Label>
+                <Form.Control
+                  value={name || ""}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-                {/* Price */}
-                <Form.Group className="mb-3" controlId="formPrice">
-                  <Form.Label>Price (₹)</Form.Label>
-                  <Form.Control
-                    type="number"
-                    placeholder="Enter price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    required
-                  />
-                </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Quantity</Form.Label>
+                <Form.Control
+                  value={quantity || ""}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-                {/* Description */}
-                <Form.Group className="mb-3" controlId="formDescription">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    placeholder="Enter product description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Image URL</Form.Label>
+                <Form.Control
+                  value={image || ""}
+                  onChange={(e) => setImage(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-                {/* Image Upload */}
-                {/* <Form.Group className="mb-3" controlId="formImage">
-                  <Form.Label>Upload Image</Form.Label>
-                  <Form.Control
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setImage(e.target.files[0])}
-                  />
-                </Form.Group> */}
+              <Form.Group className="mb-3">
+                <Form.Label>Category</Form.Label>
+                <Form.Select
+                  value={category || ""}
+                  onChange={(e) => setCategory(e.target.value)}
+                  required
+                >
+                  <option value="">Select</option>
+                  <option value="Breakfast">Breakfast</option>
+                  <option value="Lunch">Lunch</option>
+                  <option value="Dinner">Dinner</option>
+                  <option value="Snacks">Snacks</option>
+                  <option value="Drinks">Drinks</option>
+                </Form.Select>
+              </Form.Group>
 
-                {/* Submit Button */}
-                <div className="d-grid">
-                  <Button
-                    variant="success"
-                    type="submit"
-                    className="fw-semibold rounded-3"
-                  >
-                    Add Product
-                  </Button>
-                </div>
-              </Form>
-            </Card.Body>
+              <Form.Group className="mb-3">
+                <Form.Label>Price</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={price || ""}
+                  onChange={(e) => setPrice(e.target.value)}
+                  required
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={description || ""}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </Form.Group>
+
+              <Button type="submit" variant="success" className="w-100">
+                Add Product
+              </Button>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <Card className="shadow border-0 p-4">
+            <h4 className="mb-4">📋 Product List</h4>
+
+            <Table striped bordered hover responsive>
+              <thead className="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+  {items.map((item, index) => (
+    <tr key={item?.id || index}>
+      <td>{index + 1}</td>
+
+      <td>
+        {item?.image ? (
+          <img
+            src={item.image}
+            width="60"
+            height="60"
+            style={{ objectFit: "cover" }}
+          />
+        ) : null}
+      </td>
+
+      <td>{item?.name}</td>
+      <td>{item?.category}</td>
+      <td>₹{item?.price}</td>
+      <td>{item?.quantity}</td>
+      <td>{item?.description}</td>
+
+      <td>
+        <Button
+          variant="warning"
+          size="sm"
+          className="me-2"
+          onClick={() => editProduct(item)}
+        >
+          Edit
+        </Button>
+
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => deleteProduct(item.id)}
+        >
+          Delete
+        </Button>
+      </td>
+    </tr>
+  ))}
+</tbody>
+            </Table>
+
+            {items.length === 0 && (
+              <p className="text-center mt-3">No products found</p>
+            )}
           </Card>
         </Col>
       </Row>
@@ -132,6 +245,3 @@ function Addfooditem() {
 }
 
 export default Addfooditem;
-
-
-

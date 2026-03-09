@@ -29,3 +29,26 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
+
+export async function GET() {
+  try {
+    await dbConnect();
+
+    const users = await User.find({}, { password: 0 });
+
+    return NextResponse.json(
+      {
+        message: "Users fetched successfully",
+        data: users,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("GET API error:", error);
+
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}

@@ -9,7 +9,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
- const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
   setError("");
 
@@ -27,11 +27,14 @@ function Login() {
       return;
     }
 
-    console.log("Login successful:", data.user);
-    router.push("/"); 
+    // store login
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    router.push("/");
+
   } catch (err) {
-    console.error(err);
-    setError("Something went wrong. Please try again.");
+    setError("Something went wrong");
   }
 };
 

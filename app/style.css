@@ -127,3 +127,20 @@
 .hero-subtext {
   color: rgba(255, 255, 255, 0.7);
 }
+
+.food-card{
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.food-card:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.food-img{
+  height: 220px;
+  object-fit: cover;
+  width: 100%;
+}
