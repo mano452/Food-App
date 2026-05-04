@@ -1,14 +1,15 @@
 'use client'
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
 
 type Product = {
-  id: number;
+  _id: string;
   name: string;
   category: string;
   description: string;
-  price: number;
-  quantity: number;
+  price: string;
+  quantity: string;
   image: string;
 };
 
@@ -16,7 +17,7 @@ function Cardsection() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/additems")
+    fetch("/api/additems")
       .then((res) => res.json())
       .then((data) => {
         console.log("Fetched products:", data);
@@ -31,8 +32,7 @@ function Cardsection() {
 
       <Row>
         {products?.map((product) => (
-          <Col key={product.id} lg={4} md={6} xs={12} className="mb-4">
-            
+          <Col key={product._id} lg={4} md={6} xs={12} className="mb-4">
             <Card className="food-card border-0 shadow-sm h-100">
 
               {/* Image Section */}
@@ -79,9 +79,11 @@ function Cardsection() {
                   <Button variant="dark" className="w-100">
                     Add to Cart
                   </Button>
-                  <Button variant="outline-dark" className="w-100">
-                    Buy Now
-                  </Button>
+                  <Link href={`/buynow/${product._id}`} className="w-100">
+                    <Button variant="outline-dark" className="w-100">
+                      Buy Now
+                    </Button>
+                  </Link>
                 </div>
 
               </Card.Body>
